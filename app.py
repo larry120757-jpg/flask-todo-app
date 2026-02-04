@@ -4,22 +4,31 @@ from datetime import date, datetime
 
 app = Flask(__name__)
 
-# Database config (SQLite)
+# Database config
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
-# Database table
+# ======================
+# Database model
+# ======================
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     done = db.Column(db.Boolean, default=False)
-    due_date = db.Column(db.String(10), nullable=True)  # "YYYY-MM-DD"
+    due_date = db.Column(db.String(10), nullable=True)  # YYYY-MM-DD
+
+
+# ======================
+# FORCE table creation
+# (critical for Render)
+# ======================
+with app.app_context():
+    db.create_all()
 
 
 def parse_due(due_str):
-    """Convert 'YYYY-MM-DD' string -> date object (or None)."""
     if not due_str:
         return None
     try:
@@ -28,26 +37,25 @@ def parse_due(due_str):
         return None
 
 
-# ✅ Render fix: ensure tables exist before any request hits the DB
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
-
 @app.route("/", methods=["GET", "POST"])
 def home():
-    # CREATE (Add task)
+    # CREATE
     if request.method == "POST":
         title = request.form["task"].strip()
         due = request.form.get("due_date", "").strip()
 
         if title:
-            db.session.add(Task(title=title, due_date=due if due else None))
+            db.session.add(
+                Task(
+                    title=title,
+                    due_date=due if due else None
+                )
+            )
             db.session.commit()
 
         return redirect(url_for("home"))
 
-    # READ (Filter tasks)
+    # FILTER
     filter_type = request.args.get("filter", "all")
 
     if filter_type == "active":
@@ -62,19 +70,17 @@ def home():
     active_tasks = Task.query.filter_by(done=False).count()
     done_tasks = Task.query.filter_by(done=True).count()
 
-    # Today for due date checks
     today = date.today()
 
-    # Build view model for template (status per task)
     task_view = []
     for t in tasks:
         due_obj = parse_due(t.due_date)
-        status = "none"  # none | today | overdue | future
+        status = "none"
 
-        if due_obj:
-            if due_obj < today and not t.done:
+        if due_obj and not t.done:
+            if due_obj < today:
                 status = "overdue"
-            elif due_obj == today and not t.done:
+            elif due_obj == today:
                 status = "today"
             else:
                 status = "future"
@@ -88,13 +94,11 @@ def home():
         total_tasks=total_tasks,
         active_tasks=active_tasks,
         done_tasks=done_tasks,
-        today=str(today),
     )
 
 
 @app.route("/toggle/<int:task_id>")
 def toggle(task_id):
-    # UPDATE (Toggle done)
     filter_type = request.args.get("filter", "all")
     task = Task.query.get_or_404(task_id)
     task.done = not task.done
@@ -104,7 +108,6 @@ def toggle(task_id):
 
 @app.route("/delete/<int:task_id>")
 def delete(task_id):
-    # DELETE (Remove task)
     filter_type = request.args.get("filter", "all")
     task = Task.query.get_or_404(task_id)
     db.session.delete(task)
@@ -114,7 +117,6 @@ def delete(task_id):
 
 @app.route("/edit/<int:task_id>", methods=["GET", "POST"])
 def edit(task_id):
-    # UPDATE (Edit title + due date)
     filter_type = request.args.get("filter", "all")
     task = Task.query.get_or_404(task_id)
 
@@ -128,5 +130,4 @@ def edit(task_id):
 
 
 if __name__ == "__main__":
-    # Local run
     app.run(host="0.0.0.0", port=10000)
