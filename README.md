@@ -38,5 +38,4 @@ This project was built step-by-step as a hands-on way to learn **full-stack web 
 
 ## 🚀 Live Demo
 
-🔗 **Live App:** *(Add Render URL here after deployment)*  
-Example:
+🔗 **Live App:** *(Coming soon — deployment in progress)*  
