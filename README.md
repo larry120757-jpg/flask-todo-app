@@ -38,4 +38,4 @@ This project was built step-by-step as a hands-on way to learn **full-stack web 
 
 ## 🚀 Live Demo
 
-🔗 **Live App:** *(Coming soon — deployment in progress)*  
+🔗 https://flask-todo-app.onrender.com
