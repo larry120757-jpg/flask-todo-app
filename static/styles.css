@@ -1,0 +1,150 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f6f7fb;
+  margin: 0;
+  padding: 0;
+  transition: background 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 820px;
+  margin: 60px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: background 0.3s;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dark-toggle {
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+input[type="text"] {
+  flex: 1;
+  min-width: 260px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.date-input {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.filters {
+  margin-bottom: 15px;
+  display: flex;
+  gap: 12px;
+}
+
+.filters a {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #e5e7eb;
+  color: #111827;
+  text-decoration: none;
+}
+
+.filters a.active {
+  background: #111827;
+  color: white;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 10px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.task-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.due {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Status colors */
+.task-row.overdue .due {
+  color: #dc2626; /* red */
+  font-weight: bold;
+}
+.task-row.today .due {
+  color: #f59e0b; /* orange */
+  font-weight: bold;
+}
+
+/* links */
+.actions a {
+  margin-left: 10px;
+  text-decoration: none;
+}
+
+.actions .toggle { color: #2563eb; }
+.actions .edit { color: #7c3aed; }
+.actions .delete { color: #dc2626; }
+
+/* 🌙 DARK MODE */
+body.dark {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+body.dark .container {
+  background: #020617;
+}
+
+body.dark .filters a {
+  background: #1e293b;
+  color: #e5e7eb;
+}
+
+body.dark .filters a.active {
+  background: #38bdf8;
+  color: #020617;
+}
+
+body.dark input[type="text"],
+body.dark .date-input {
+  background: #020617;
+  color: white;
+  border-color: #334155;
+}

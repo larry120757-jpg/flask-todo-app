@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My To-Do App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>My To-Do App</h1>
+        <button class="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+    </div>
+
+    <form method="POST" id="taskForm">
+        <input
+            type="text"
+            name="task"
+            id="taskInput"
+            placeholder="Enter a task"
+            required
+            autofocus
+        >
+        <input type="date" name="due_date" class="date-input">
+        <button type="submit">Add Task</button>
+    </form>
+
+    <div class="filters">
+        <a href="/?filter=all" class="{% if filter_type == 'all' %}active{% endif %}">
+            All ({{ total_tasks }})
+        </a>
+        <a href="/?filter=active" class="{% if filter_type == 'active' %}active{% endif %}">
+            Active ({{ active_tasks }})
+        </a>
+        <a href="/?filter=done" class="{% if filter_type == 'done' %}active{% endif %}">
+            Completed ({{ done_tasks }})
+        </a>
+    </div>
+
+    <h2>Tasks</h2>
+
+    <ul>
+        {% for item in task_view %}
+            {% set task = item.task %}
+            {% set status = item.status %}
+
+            <li class="task-row {{ status }}">
+                <div class="task-left">
+                    {% if task.done %}
+                        ✅ <s>{{ task.title }}</s>
+                    {% else %}
+                        ⏳ {{ task.title }}
+                    {% endif %}
+
+                    {% if task.due_date %}
+                        <span class="due">Due: {{ task.due_date }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="actions">
+                    <a class="toggle" href="/toggle/{{ task.id }}?filter={{ filter_type }}">Toggle</a>
+                    <a class="edit" href="/edit/{{ task.id }}?filter={{ filter_type }}">Edit</a>
+                    <a class="delete"
+                       href="/delete/{{ task.id }}?filter={{ filter_type }}"
+                       onclick="return confirmDelete('{{ task.title | e }}');">
+                        Delete
+                    </a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+function confirmDelete(taskTitle) {
+    return confirm(`Delete this task?\n\n"${taskTitle}"`);
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+}
+if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
+}
+
+document.getElementById("taskInput").focus();
+</script>
+
+</body>
+</html>

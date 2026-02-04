@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Task</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Edit Task</h1>
+
+    <form method="POST">
+        <input
+            type="text"
+            name="title"
+            id="editInput"
+            value="{{ task.title }}"
+            required
+            autofocus
+        >
+
+        <input type="date" name="due_date" class="date-input" value="{{ task.due_date or '' }}">
+
+        <button type="submit">Save</button>
+    </form>
+
+    <p><small>Press ESC to cancel</small></p>
+
+    <a href="/?filter={{ filter_type }}">⬅ Back</a>
+</div>
+
+<script>
+const editInput = document.getElementById("editInput");
+editInput.focus();
+
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+        window.location.href = "/?filter={{ filter_type }}";
+    }
+});
+</script>
+
+</body>
+</html>
